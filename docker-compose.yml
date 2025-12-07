@@ -1,0 +1,39 @@
+services:
+  task-php:
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+    container_name: task-php
+    volumes:
+      - ./app:/app
+    networks:
+      - task-net
+
+  task-nginx:
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile
+    container_name: task-nginx
+    ports:
+      - "8001:80"
+    volumes:
+      - ./app:/app
+    depends_on:
+      - task-php
+    networks:
+      - task-net
+
+  task-db:
+    image: postgres:18
+    container_name: task-db
+    environment:
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: task_service
+    ports:
+      - "5401:5432"
+    networks:
+      - task-net
+
+networks:
+  task-net:
+
