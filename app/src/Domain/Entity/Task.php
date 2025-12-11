@@ -2,6 +2,7 @@
 
 namespace App\Domain\Entity;
 
+use App\Domain\Enum\TaskPriority;
 use App\Domain\Enum\TaskStatus;
 use App\Infrastructure\Repository\TaskRepository;
 use Doctrine\DBAL\Types\Types;
@@ -23,6 +24,18 @@ class Task
 
     #[ORM\Column(type: "string", length: 20, enumType: TaskStatus::class)]
     private TaskStatus $status = TaskStatus::PENDING;
+
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $dueDate = null;
+
+    #[ORM\Column(type: Types::GUID, nullable: true)]
+    private ?string $assigneeId = null;
+
+    #[ORM\Column(type: "string", enumType: TaskPriority::class)]
+    private TaskPriority $priority = TaskPriority::MEDIUM;
+
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $deletedAt = null;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private ?\DateTimeImmutable $createdAt = null;
@@ -107,5 +120,25 @@ class Task
         $this->updatedAt = $updatedAt;
 
         return $this;
+    }
+
+    public static function create(
+        string $title,
+        ?string $description,
+        TaskPriority $priority,
+        ?\DateTimeImmutable $dueDate,
+        ?string $assigneeId
+    ): self {
+        $task = new self();
+        $task->id = Uuid::v4()->toRfc4122();
+        $task->title = $title;
+        $task->description = $description;
+        $task->priority = $priority;
+        $task->dueDate = $dueDate;
+        $task->assigneeId = $assigneeId;
+        $task->createdAt = new \DateTimeImmutable();
+        $task->updatedAt = new \DateTimeImmutable();
+
+        return $task;
     }
 }

@@ -3,41 +3,29 @@
 namespace App\Infrastructure\Repository;
 
 use App\Domain\Entity\Task;
+use App\Domain\Repository\TaskRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<Task>
  */
-class TaskRepository extends ServiceEntityRepository
+class TaskRepository extends ServiceEntityRepository implements TaskRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Task::class);
     }
 
-    //    /**
-    //     * @return Task[] Returns an array of Task objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('t')
-    //            ->andWhere('t.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('t.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function save(Task $task): void
+    {
+        $this->getEntityManager()->persist($task);
+        $this->getEntityManager()->flush();
+    }
 
-    //    public function findOneBySomeField($value): ?Task
-    //    {
-    //        return $this->createQueryBuilder('t')
-    //            ->andWhere('t.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function delete(Task $task): void
+    {
+        $this->getEntityManager()->remove($task);
+        $this->getEntityManager()->flush();
+    }
 }

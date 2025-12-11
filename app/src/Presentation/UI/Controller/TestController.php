@@ -1,6 +1,6 @@
 <?php
 
-namespace App\UI\Controller;
+namespace App\Presentation\UI\Controller;
 
 use App\Domain\Entity\Task;
 use App\Domain\Enum\TaskStatus;
